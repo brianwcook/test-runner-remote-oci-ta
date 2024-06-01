@@ -1,0 +1,41 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  creationTimestamp: null
+  labels:
+    appstudio.openshift.io/application: konflux-arm64-test-demo
+    appstudio.openshift.io/component: arm64-test-demo
+    pipelines.appstudio.openshift.io/type: build
+  name: mpc-test-pipeline
+  namespace: brianwcook-tenant
+spec:
+  params:
+  - name: git-url
+    type: string
+    default: ""
+  - name: revision
+    default: "main"
+    type: string
+  - name: platform
+    type: string
+    default: "linux/amd64"
+    description: architecture to execute the test pipeline on
+  results:
+    - description: ""
+      name: IMAGE_URL
+      value: $(results.mpc-run-test.TEST_OUTPUT)
+  tasks:
+    - name: mpc-run-test
+      params:
+        - name: PLATFORM
+          value: linux/arm64
+      taskRef:
+        resolver: git
+        params:
+        - name: url
+          value: https://github.com/brianwcook/konflux-mpc-test-runner
+        - name: revision
+          value: main
+        - name: pathInRepo
+          value: test-runner.yaml
+status: {}
