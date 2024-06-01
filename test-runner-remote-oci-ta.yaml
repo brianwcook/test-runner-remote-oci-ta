@@ -1,0 +1,106 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  annotations:
+    tekton.dev/pipelines.minVersion: 0.12.1
+    tekton.dev/tags: test, konflux
+  labels:
+    app.kubernetes.io/version: "0.1"
+    build.appstudio.redhat.com/multi-platform-required: "true"
+  name: test-runner-remote-oci-ta
+spec:
+  description: test-runner-remote-oci-ta
+  params:
+  - name: platform
+    description: The platform to build on
+    type: string
+  - name: user-image
+    description: the container image that will be used on the remote host to execute $(params.user-exec)
+    type: string
+  - name: user-exec
+    description: the command which will be executed inside $(params.user-image) container with podman
+
+  results:
+    - name: TEST_OUTPUT
+      description: the konflux test output string
+  
+  stepTemplate:
+    env:
+    - name: USER_IMAGE
+      value: $(params.user-image)
+    computeResources: {}
+  
+  steps:
+  - name: remote-pre
+    image: quay.io/redhat-appstudio/multi-platform-runner:01c7670e81d5120347cf0ad13372742489985e5f@sha256:246adeaaba600e207131d63a7f706cffdcdc37d8f600c56187123ec62823ff44
+    command:
+        - remote-pre.sh
+    securityContext:
+      capabilities:
+        add:
+        - SETFCAP
+    volumeMounts:
+    - mountPath: /workspace
+      name: workspace
+    - mountPath: /ssh
+      name: ssh
+      readOnly: true
+  
+  - name: execute
+    env:
+    - name: COMMIT_SHA
+      value: "foo"
+    - name: $USER_EXEC
+      value: $(params.user-exec)
+    - name: $USER_IMAGE
+      value: $(params.user-image)
+    image: quay.io/redhat-appstudio/multi-platform-runner:01c7670e81d5120347cf0ad13372742489985e5f@sha256:246adeaaba600e207131d63a7f706cffdcdc37d8f600c56187123ec62823ff44
+    # per https://kubernetes.io/docs/concepts/containers/images/#imagepullpolicy-defaulting
+    # the cluster will set imagePullPolicy to IfNotPresent
+    computeResources:
+      limits:
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 128Mi
+    script: |-
+      #/bin/bash
+      ssh $SSH_ARGS "$SSH_HOST" podman  run \
+      -e PARAM_USER_IMAGE=$USER_IMAGE" \
+      -v $BUILD_DIR/scripts:/script:Z \
+      --user=0  --rm  "$USER_IMAGE" $USER_EXEC
+    securityContext:
+      capabilities:
+        add:
+        - SETFCAP
+    volumeMounts:
+    - mountPath: /workspace
+      name: workspace
+    - mountPath: /ssh
+      name: ssh
+      readOnly: true
+ 
+  - name: remote-post
+    image: quay.io/redhat-appstudio/multi-platform-runner:01c7670e81d5120347cf0ad13372742489985e5f@sha256:246adeaaba600e207131d63a7f706cffdcdc37d8f600c56187123ec62823ff44
+    command:
+        - remote-post.sh
+    securityContext:
+      capabilities:
+        add:
+        - SETFCAP
+
+    volumeMounts:
+    - mountPath: /workspace
+      name: workspace
+    - mountPath: /ssh
+      name: ssh
+      readOnly: true
+  
+  volumes:
+  - emptyDir: {}
+    name: workspace
+  - name: ssh
+    secret:
+      optional: false
+      secretName: multi-platform-ssh-$(context.taskRun.name)
+
