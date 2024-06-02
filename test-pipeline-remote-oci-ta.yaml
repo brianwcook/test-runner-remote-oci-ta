@@ -2,11 +2,7 @@ apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   creationTimestamp: null
-  labels:
-    appstudio.openshift.io/application: konflux-arm64-test-demo
-    appstudio.openshift.io/component: arm64-test-demo
-    pipelines.appstudio.openshift.io/type: build
-  name: mpc-test-pipeline
+  name: test-pipeline-remote-oci-ta
   namespace: brianwcook-tenant
 spec:
   params:
