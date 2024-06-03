@@ -28,24 +28,29 @@ spec:
     description: the konflux test output string
 
   stepTemplate:
-    computeResources: {}
-  
-  steps:
-  - name: remote-pre
     image: $(params.mpc-image)
-    command:
-        - remote-pre.sh
-    securityContext:
-      capabilities:
-        add:
-        - SETFCAP
+    computeResources:
+      limits:
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 128Mi
     volumeMounts:
     - mountPath: /workspace
       name: workspace
     - mountPath: /ssh
       name: ssh
       readOnly: true
-
+    securityContext:
+      capabilities:
+        add:
+        - SETFCAP
+    
+  steps:
+  - name: remote-pre
+    command:
+        - remote-pre.sh
+    
   - name: execute
     image: $(params.mpc-image)
     env:
@@ -55,68 +60,23 @@ spec:
       value: $(params.user-exec)
     - name: USER_IMAGE
       value: $(params.user-image)
-    computeResources:
-      limits:
-        memory: 512Mi
-      requests:
-        cpu: 250m
-        memory: 128Mi
+    
     script: |-
       #/bin/bash
       ssh $SSH_ARGS "$SSH_HOST" podman  run \
       -e PARAM_USER_IMAGE=$USER_IMAGE" \
       -v $BUILD_DIR/scripts:/script:Z \
       --user=0  --rm  "$USER_IMAGE" $USER_EXEC
-    securityContext:
-      capabilities:
-        add:
-        - SETFCAP
-    volumeMounts:
-    - mountPath: /workspace
-      name: workspace
-    - mountPath: /ssh
-      name: ssh
-      readOnly: true
-
+   
   - name: remote-post
-    image: $(params.mpc-image)
     command:
         - remote-post.sh
-    securityContext:
-      capabilities:
-        add:
-        - SETFCAP
-    volumeMounts:
-    - mountPath: /workspace
-      name: workspace
-    - mountPath: /ssh
-      name: ssh
-      readOnly: true
   
   - name: collect-results
-    image: $(params.mpc-image)
-    # per https://kubernetes.io/docs/concepts/containers/images/#imagepullpolicy-defaulting
-    # the cluster will set imagePullPolicy to IfNotPresent
-    computeResources:
-      limits:
-        memory: 512Mi
-      requests:
-        cpu: 250m
-        memory: 128Mi
     script: |-
       #/bin/bash
       echo "placeholder" | tee $(results.TEST_OUTPUT.path) 
-    securityContext:
-      capabilities:
-        add:
-        - SETFCAP
-    volumeMounts:
-  - mountPath: /workspace
-    name: workspace
-  - mountPath: /ssh
-    name: ssh
-    readOnly: true
-
+  
   volumes:
   - emptyDir: {}
     name: workspace
