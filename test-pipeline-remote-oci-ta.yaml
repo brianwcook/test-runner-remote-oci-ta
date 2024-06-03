@@ -21,7 +21,7 @@ spec:
       name: IMAGE_URL
       value: $(tasks.test-runner-remote-oci-ta.results.TEST_OUTPUT)
   tasks:
-    - name: mpc-run-test
+    - name: test-runner-remote-oci-ta
       params:
         - name: PLATFORM
           value: linux/arm64
@@ -29,9 +29,9 @@ spec:
         resolver: git
         params:
         - name: url
-          value: https://github.com/brianwcook/konflux-mpc-test-runner
+          value: https://github.com/brianwcook/test-runner-remote-oci-ta
         - name: revision
           value: main
         - name: pathInRepo
-          value: test-runner.yaml
+          value: test-runner-remote-oci-ta.yaml
 status: {}
