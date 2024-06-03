@@ -49,7 +49,7 @@ spec:
   steps:
   - name: remote-pre
     command:
-        - "/bin/bash -c "pwd && ls -alR && remote-pre.sh"
+      - "/bin/bash -c "pwd && ls -alR && remote-pre.sh"
     
   - name: execute
     image: $(params.mpc-image)
@@ -71,7 +71,7 @@ spec:
    
   - name: remote-post
     command:
-        - remote-post.sh
+      - remote-post.sh
   
   - name: collect-results
     script: |-
