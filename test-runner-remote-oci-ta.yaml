@@ -53,6 +53,7 @@ spec:
     
   - name: execute
     image: $(params.mpc-image)
+    # workingDir: $(workspaces.source.path)
     env:
     - name: COMMIT_SHA
       value: "foo"
