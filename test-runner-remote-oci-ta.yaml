@@ -28,10 +28,8 @@ spec:
     description: the konflux test output string
 
   stepTemplate:
-    env:
-    - name: MPC_IMAGE
-      value: $(params.user-image)
     computeResources: {}
+  
   steps:
   - name: remote-pre
     image: $(params.mpc-image)
@@ -96,7 +94,6 @@ spec:
       readOnly: true
   
   - name: collect-results
-    env:
     image: $(params.mpc-image)
     # per https://kubernetes.io/docs/concepts/containers/images/#imagepullpolicy-defaulting
     # the cluster will set imagePullPolicy to IfNotPresent
