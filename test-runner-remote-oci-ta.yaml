@@ -34,9 +34,7 @@ spec:
     computeResources: {}
   steps:
   - name: remote-pre
-    env:
-      - name: image
-        value: 
+    image: $(params.mpc-image)
     command:
         - remote-pre.sh
     securityContext:
@@ -51,6 +49,7 @@ spec:
       readOnly: true
 
   - name: execute
+    image: $(params.mpc-image)
     env:
     - name: COMMIT_SHA
       value: "foo"
@@ -58,9 +57,6 @@ spec:
       value: $(params.user-exec)
     - name: USER_IMAGE
       value: $(params.user-image)
-    image: $(params.mpc-image)
-    # per https://kubernetes.io/docs/concepts/containers/images/#imagepullpolicy-defaulting
-    # the cluster will set imagePullPolicy to IfNotPresent
     computeResources:
       limits:
         memory: 512Mi
@@ -117,6 +113,12 @@ spec:
       capabilities:
         add:
         - SETFCAP
+    volumeMounts:
+  - mountPath: /workspace
+    name: workspace
+  - mountPath: /ssh
+    name: ssh
+    readOnly: true
 
   volumes:
   - emptyDir: {}
