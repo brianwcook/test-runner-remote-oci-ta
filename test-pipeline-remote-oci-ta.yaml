@@ -45,12 +45,12 @@ spec:
           value: main
         - name: pathInRepo
           value: test-runner-remote-oci-ta.yaml
-    volumeMounts:
-    - mountPath: /workspace
-      name: workspace
-    - mountPath: /ssh
-      name: ssh
-      readOnly: true 
+      volumeMounts:
+      - mountPath: /workspace
+        name: workspace
+      - mountPath: /ssh
+        name: ssh
+        readOnly: true 
   volumes:
   - emptyDir: {}
     name: workspace
