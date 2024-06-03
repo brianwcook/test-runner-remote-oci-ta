@@ -45,4 +45,11 @@ spec:
           value: main
         - name: pathInRepo
           value: test-runner-remote-oci-ta.yaml
+  volumes:
+  - emptyDir: {}
+    name: workspace
+  - name: ssh
+    secret:
+      optional: false
+      secretName: multi-platform-ssh-$(context.taskRun.name)
 status: {}
