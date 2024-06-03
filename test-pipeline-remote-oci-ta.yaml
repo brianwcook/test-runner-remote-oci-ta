@@ -16,6 +16,13 @@ spec:
     type: string
     default: "linux/amd64"
     description: architecture to execute the test pipeline on
+  - name: user-image
+    type: string
+    description: the image to use when executing the test sscript
+  - name: user-exec
+    type: string
+    description: the command to run to execute the test
+
   results:
     - description: ""
       name: IMAGE_URL
