@@ -19,19 +19,24 @@ spec:
     type: string
   - name: user-exec
     description: the command which will be executed inside $(params.user-image) container with podman
+  - name: mpc-image
+    default: quay.io/redhat-user-workloads/brianwcook-tenant/konflux-builds/test-runner-remote-oci-ta:d4aa719a8b347b04f45dd363cf093a02d66991c4
+    description: the image used by this task during all steps. Includes pre and post scripts. 
+  
   results:
-    - name: TEST_OUTPUT
-      description: the konflux test output string
+  - name: TEST_OUTPUT
+    description: the konflux test output string
 
   stepTemplate:
     env:
-    - name: USER_IMAGE
+    - name: MPC_IMAGE
       value: $(params.user-image)
     computeResources: {}
-  
   steps:
   - name: remote-pre
-    image: quay.io/redhat-user-workloads/brianwcook-tenant/konflux-builds/test-runner-remote-oci-ta:d4aa719a8b347b04f45dd363cf093a02d66991c4
+    env:
+      - name: image
+        value: 
     command:
         - remote-pre.sh
     securityContext:
@@ -53,7 +58,7 @@ spec:
       value: $(params.user-exec)
     - name: USER_IMAGE
       value: $(params.user-image)
-    image: quay.io/redhat-user-workloads/brianwcook-tenant/konflux-builds/test-runner-remote-oci-ta:d4aa719a8b347b04f45dd363cf093a02d66991c4
+    image: $(params.mpc-image)
     # per https://kubernetes.io/docs/concepts/containers/images/#imagepullpolicy-defaulting
     # the cluster will set imagePullPolicy to IfNotPresent
     computeResources:
@@ -80,7 +85,7 @@ spec:
       readOnly: true
 
   - name: remote-post
-    image: quay.io/redhat-user-workloads/brianwcook-tenant/konflux-builds/test-runner-remote-oci-ta:d4aa719a8b347b04f45dd363cf093a02d66991c4
+    image: $(params.mpc-image)
     command:
         - remote-post.sh
     securityContext:
@@ -96,7 +101,7 @@ spec:
   
   - name: collect-results
     env:
-    image: quay.io/redhat-user-workloads/brianwcook-tenant/konflux-builds/test-runner-remote-oci-ta:d4aa719a8b347b04f45dd363cf093a02d66991c4
+    image: $(params.mpc-image)
     # per https://kubernetes.io/docs/concepts/containers/images/#imagepullpolicy-defaulting
     # the cluster will set imagePullPolicy to IfNotPresent
     computeResources:
