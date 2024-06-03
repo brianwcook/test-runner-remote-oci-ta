@@ -49,9 +49,9 @@ spec:
     env:
     - name: COMMIT_SHA
       value: "foo"
-    - name: $USER_EXEC
+    - name: USER_EXEC
       value: $(params.user-exec)
-    - name: $USER_IMAGE
+    - name: USER_IMAGE
       value: $(params.user-image)
     image: quay.io/redhat-user-workloads/brianwcook-tenant/konflux-builds/test-runner-remote-oci-ta:d4aa719a8b347b04f45dd363cf093a02d66991c4
     # per https://kubernetes.io/docs/concepts/containers/images/#imagepullpolicy-defaulting
