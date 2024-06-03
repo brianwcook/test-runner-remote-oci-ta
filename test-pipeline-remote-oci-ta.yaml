@@ -30,8 +30,12 @@ spec:
   tasks:
     - name: test-runner-remote-oci-ta
       params:
-        - name: PLATFORM
-          value: linux/arm64
+        - name: platform
+          value: $(params.platform)
+        - name: user-exec
+          value: $(params.user-exec)
+        - name: user-image
+          value: $(params.user-image)
       taskRef:
         resolver: git
         params:
