@@ -11,7 +11,7 @@ metadata:
 spec:
   description: test-runner-remote-oci-ta
   params:
-  - name: platform
+  - name: PLATFORM
     description: The platform to build on
     type: string
   - name: user-image
