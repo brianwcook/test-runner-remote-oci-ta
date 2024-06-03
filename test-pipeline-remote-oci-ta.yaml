@@ -19,7 +19,7 @@ spec:
   results:
     - description: ""
       name: IMAGE_URL
-      value: $(results.mpc-run-test.TEST_OUTPUT)
+      value: $(tasks.test-runner-remote-oci-ta.results.TEST_OUTPUT)
   tasks:
     - name: mpc-run-test
       params:

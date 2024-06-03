@@ -19,11 +19,10 @@ spec:
     type: string
   - name: user-exec
     description: the command which will be executed inside $(params.user-image) container with podman
-
   results:
     - name: TEST_OUTPUT
       description: the konflux test output string
-  
+
   stepTemplate:
     env:
     - name: USER_IMAGE
@@ -32,7 +31,7 @@ spec:
   
   steps:
   - name: remote-pre
-    image: quay.io/redhat-appstudio/multi-platform-runner:01c7670e81d5120347cf0ad13372742489985e5f@sha256:246adeaaba600e207131d63a7f706cffdcdc37d8f600c56187123ec62823ff44
+    image: quay.io/redhat-user-workloads/brianwcook-tenant/konflux-builds/test-runner-remote-oci-ta:d4aa719a8b347b04f45dd363cf093a02d66991c4
     command:
         - remote-pre.sh
     securityContext:
@@ -45,7 +44,7 @@ spec:
     - mountPath: /ssh
       name: ssh
       readOnly: true
-  
+
   - name: execute
     env:
     - name: COMMIT_SHA
@@ -54,7 +53,7 @@ spec:
       value: $(params.user-exec)
     - name: $USER_IMAGE
       value: $(params.user-image)
-    image: quay.io/redhat-appstudio/multi-platform-runner:01c7670e81d5120347cf0ad13372742489985e5f@sha256:246adeaaba600e207131d63a7f706cffdcdc37d8f600c56187123ec62823ff44
+    image: quay.io/redhat-user-workloads/brianwcook-tenant/konflux-builds/test-runner-remote-oci-ta:d4aa719a8b347b04f45dd363cf093a02d66991c4
     # per https://kubernetes.io/docs/concepts/containers/images/#imagepullpolicy-defaulting
     # the cluster will set imagePullPolicy to IfNotPresent
     computeResources:
@@ -79,16 +78,15 @@ spec:
     - mountPath: /ssh
       name: ssh
       readOnly: true
- 
+
   - name: remote-post
-    image: quay.io/redhat-appstudio/multi-platform-runner:01c7670e81d5120347cf0ad13372742489985e5f@sha256:246adeaaba600e207131d63a7f706cffdcdc37d8f600c56187123ec62823ff44
+    image: quay.io/redhat-user-workloads/brianwcook-tenant/konflux-builds/test-runner-remote-oci-ta:d4aa719a8b347b04f45dd363cf093a02d66991c4
     command:
         - remote-post.sh
     securityContext:
       capabilities:
         add:
         - SETFCAP
-
     volumeMounts:
     - mountPath: /workspace
       name: workspace
@@ -96,6 +94,25 @@ spec:
       name: ssh
       readOnly: true
   
+  - name: collect-results
+    env:
+    image: quay.io/redhat-user-workloads/brianwcook-tenant/konflux-builds/test-runner-remote-oci-ta:d4aa719a8b347b04f45dd363cf093a02d66991c4
+    # per https://kubernetes.io/docs/concepts/containers/images/#imagepullpolicy-defaulting
+    # the cluster will set imagePullPolicy to IfNotPresent
+    computeResources:
+      limits:
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 128Mi
+    script: |-
+      #/bin/bash
+      echo "placeholder" | tee $(results.TEST_OUTPUT.path) 
+    securityContext:
+      capabilities:
+        add:
+        - SETFCAP
+
   volumes:
   - emptyDir: {}
     name: workspace
