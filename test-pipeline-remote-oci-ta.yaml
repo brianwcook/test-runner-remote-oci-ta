@@ -30,7 +30,7 @@ spec:
   tasks:
     - name: test-runner-remote-oci-ta
       params:
-        - name: platform
+        - name: PLATFORM
           value: $(params.platform)
         - name: user-exec
           value: $(params.user-exec)
