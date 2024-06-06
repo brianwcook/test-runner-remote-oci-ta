@@ -8,6 +8,7 @@ metadata:
     app.kubernetes.io/version: "0.1"
     build.appstudio.redhat.com/multi-platform-required: "true"
   name: test-runner-remote-oci-ta
+
 spec:
   description: test-runner-remote-oci-ta
   params:
@@ -47,6 +48,14 @@ spec:
         - SETFCAP
     
   steps:
+  - name: use-trusted-artifact
+    args:
+    - use
+    - $(params.SOURCE_ARTIFACT)=/var/workdir/source
+    - $(params.CACHI2_ARTIFACT)=/var/workdir/cachi2
+    computeResources: {}
+    image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:4e39fb97f4444c2946944482df47b39c5bbc195c54c6560b0647635f553ab23d
+    
   - name: remote-pre
     command: ["/bin/bash", "-c", "pwd", "&&", "ls", "-alR"]
     
@@ -63,11 +72,16 @@ spec:
     
     script: |-
       #/bin/bash
+      
+      # the following should have a source directory mounted using TA
+
       ssh $SSH_ARGS "$SSH_HOST" podman  run \
       -e PARAM_USER_IMAGE=$USER_IMAGE" \
       -v $BUILD_DIR/scripts:/script:Z \
       --user=0  --rm  "$USER_IMAGE" $USER_EXEC
-   
+
+
+
   - name: remote-post
     command: ["remote-post.sh"]
   

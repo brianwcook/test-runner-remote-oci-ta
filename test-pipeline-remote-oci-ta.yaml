@@ -28,6 +28,35 @@ spec:
       name: IMAGE_URL
       value: $(tasks.test-runner-remote-oci-ta.results.TEST_OUTPUT)
   tasks:
+    - name: clone-repository
+      taskRef:
+        resolver: bundles
+        params:
+        - name: name
+          value: git-clone-oci-ta
+        - name: bundle
+          value: quay.io/redhat-appstudio-tekton-catalog/task-git-clone-oci-ta:0.1@sha256:e3490635200600da4a6b2997b0cf8e65e012155e7795824aa36d858a890ad31f
+        - name: kind
+          value: task
+      when:
+      - input: "$(tasks.init.results.build)"
+        operator: in
+        values:
+        - 'true'
+      runAfter:
+      - init
+      params:
+      - name: url
+        value: "$(params.git-url)"
+      - name: revision
+        value: "$(params.revision)"
+      - name: ociStorage
+        value: "$(params.output-image).git"
+      - name: ociArtifactExpiresAfter
+        value: "$(params.image-expires-after)"
+      workspaces:
+      - name: basic-auth
+        workspace: git-auth
     - name: test-runner-remote-oci-ta
       params:
         - name: PLATFORM
