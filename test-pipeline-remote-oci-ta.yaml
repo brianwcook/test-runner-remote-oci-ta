@@ -25,8 +25,9 @@ spec:
 
   results:
     - description: ""
-      name: IMAGE_URL
+      name: TEST_OUTPUT
       value: $(tasks.test-runner-remote-oci-ta.results.TEST_OUTPUT)
+      
   tasks:
     - name: clone-repository
       taskRef:
@@ -46,12 +47,16 @@ spec:
       runAfter:
       - init
       params:
+      - name: image-expires-after
+        value: 5d
       - name: url
         value: "$(params.git-url)"
       - name: revision
         value: "$(params.revision)"
       - name: ociStorage
         value: "$(params.output-image).git"
+      - name: ociArtifactExpiresAfter
+        value: "$(params.image-expires-after)"
       - name: ociArtifactExpiresAfter
         value: "$(params.image-expires-after)"
       workspaces:
@@ -74,4 +79,8 @@ spec:
           value: main
         - name: pathInRepo
           value: test-runner-remote-oci-ta.yaml
+  workspaces:
+  - name: workspace
+  - name: git-auth
+    optional: true
 status: {}
