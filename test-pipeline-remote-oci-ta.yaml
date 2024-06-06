@@ -6,6 +6,8 @@ metadata:
   namespace: brianwcook-tenant
 spec:
   params:
+  - name: image-expires-after
+    value: 5d
   - name: git-url
     type: string
     default: ""
@@ -22,8 +24,6 @@ spec:
   - name: user-exec
     type: string
     description: the command to run to execute the test
-  - name: image-expires-after
-    value: 5d
 
   results:
     - description: ""
