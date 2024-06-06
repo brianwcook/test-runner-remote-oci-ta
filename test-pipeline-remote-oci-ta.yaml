@@ -54,7 +54,8 @@ spec:
       - name: basic-auth
         workspace: git-auth
     - name: test-runner-remote-oci-ta
-      runAfter: clone-repository
+      runAfter:
+      - clone-repository
       params:
         - name: PLATFORM
           value: $(params.platform)
