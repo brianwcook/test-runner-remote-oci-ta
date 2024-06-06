@@ -23,6 +23,8 @@ spec:
   - name: mpc-image
     default: quay.io/redhat-user-workloads/brianwcook-tenant/konflux-builds/test-runner-remote-oci-ta:d4aa719a8b347b04f45dd363cf093a02d66991c4
     description: the image used by this task during all steps. Includes pre and post scripts. 
+  - SOURCE_ARTIFACT
+    type: string
   
   results:
   - name: TEST_OUTPUT
