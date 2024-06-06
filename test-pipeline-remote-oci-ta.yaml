@@ -22,6 +22,8 @@ spec:
   - name: user-exec
     type: string
     description: the command to run to execute the test
+  - name: image-expires-after
+    value: 5d
 
   results:
     - description: ""
@@ -40,8 +42,6 @@ spec:
         - name: kind
           value: task
       params:
-      - name: image-expires-after
-        value: 5d
       - name: url
         value: "$(params.git-url)"
       - name: revision
