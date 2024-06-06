@@ -71,7 +71,6 @@ spec:
         - name: pathInRepo
           value: test-runner-remote-oci-ta.yaml
   workspaces:
-  - name: workspace
   - name: git-auth
     optional: true
 status: {}
