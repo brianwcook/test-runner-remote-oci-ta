@@ -6,8 +6,6 @@ metadata:
   namespace: brianwcook-tenant
 spec:
   params:
-  - name: image-expires-after
-    value: 5d
   - name: git-url
     type: string
     default: ""
@@ -49,7 +47,7 @@ spec:
       - name: ociStorage
         value: "$(context.pipelineRun.name).git"
       - name: ociArtifactExpiresAfter
-        value: "$(params.image-expires-after)"
+        value: 5d
       workspaces:
       - name: basic-auth
         workspace: git-auth
