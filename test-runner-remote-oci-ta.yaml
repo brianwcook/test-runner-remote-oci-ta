@@ -75,7 +75,7 @@ spec:
       # the following should have a source directory mounted using TA
 
       ssh $SSH_ARGS "$SSH_HOST" podman  run \
-      -e PARAM_USER_IMAGE=$USER_IMAGE" \
+      -e PARAM_USER_IMAGE="$USER_IMAGE" \
       -v $BUILD_DIR/scripts:/script:Z \
       --user=0  --rm  "$USER_IMAGE" $USER_EXEC
 
